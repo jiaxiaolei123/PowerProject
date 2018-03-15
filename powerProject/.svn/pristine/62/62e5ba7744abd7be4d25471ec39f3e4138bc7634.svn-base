@@ -1,0 +1,202 @@
+<?php $__env->startSection('content'); ?>
+<!DCOTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" name="_token" content="<?php echo e(csrf_token()); ?>"  />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+		<title>历史曲线</title>
+	</head>
+	<style>
+		select option{
+		line-height:60px;
+		height:25px;
+	}
+	</style>
+	<script>
+	
+$(function(){
+	
+	getParam();
+	date_fuzhi();
+	$("#sel").click(function(){
+		alert("d");
+	})
+})
+//获取回路仪表的参数
+function getParam(){
+	var MeterTypeID = $("#huilu option:selected").val().split("_")[1];
+		$.ajax({
+				url:"getParams", //提交给当前控制器的方法
+				type:'post',
+				async: true, //异步执行
+				data:{MeterTypeID:MeterTypeID},
+				dataType:'json',
+				headers:{'X-CSRF-TOKEN':$('meta[name="_token"]').attr('content'),charset:'gb2312'},
+				success:function(result){
+					alert(result);
+				},
+				error:function(){
+					alert("获取回路仪表参数失败");
+				}
+			
+		});
+}
+	//日期显示当前时间
+function date_fuzhi(){
+		//定义一个时间
+		var date = new Date();
+
+        //年月日连接符 
+		var seperator1 = "-"; 
+
+        //时分秒连接符
+		var seperator2 = ":";
+
+		//获取月份
+		var month = date.getMonth() + 1;
+
+		//获取日期
+		var strDate = date.getDate();
+
+		 
+		var strDate_1 = date.getDate()-1;
+
+
+		//当月份大于一小于九的时候 前面连接一个零
+		if (month >= 1 && month <= 9) {
+			month = "0" + month;
+		}
+
+		//当日期大于一小于九的时候 前面也要连接一个零
+		if (strDate >= 0 && strDate <= 9) {
+			strDate = "0" + strDate;
+		}
+
+        //获取当前时间
+		var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+				+ " " + date.getHours() + seperator2 + date.getMinutes()
+				+ seperator2 + date.getSeconds();
+        
+        //获取当前时间-1  的时间
+		var startDate = date.getFullYear() + seperator1 + month + seperator1 + strDate_1
+				+ " " + date.getHours() + seperator2 + date.getMinutes()
+				+ seperator2 + date.getSeconds();
+				
+		$("#txt_endTime").val(currentdate);
+		$("#txt_startTime").val(startDate);
+	}
+
+	
+	</script>
+	<body>
+		<div style="border:1px solid blue;">
+			<form role="form" class="form-inline" id="form" action="#" method="POST">
+			<?php echo e(csrf_field()); ?>
+
+				<div class='table-responsive'>
+					<table class='table' id='table' >
+						<tr>
+							<td>
+								<label>变电站标识&nbsp;:&nbsp;</label>
+								<span style="color:black"><?php echo e($stationSingle); ?></span>
+							</td>
+							<td>
+								<label for="huilu">监测回路&nbsp;:&nbsp;</label>
+								<select name="select_one" id="huilu" onchange="getParam()" >
+									<?php $__currentLoopData = $meterData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getFirstLoop(); ?>
+									<option value="<?php echo e($k->MeterID); ?>_<?php echo e($k->MeterTypeID); ?>"><?php echo e($k->MeterName); ?></option>
+									<?php endforeach; $__env->popLoop(); $loop = $__env->getFirstLoop(); ?>
+								</select>
+							</td>
+							<td>
+								<label for='txt_startTime'>开始时间&nbsp;:&nbsp;</label>
+								<input class="form-control" name="tenmin_startTime" type="text" value="" id="txt_startTime"
+								   onfocus="new WdatePicker({maxDate:'%y-%M-%d'})" style="width:170px; height:30px;" />
+							</td>
+							<td>
+								<label for='txt_endTime'>结束时间&nbsp;:&nbsp;</label>
+								<input class="form-control" name="tenmin_endTime" type="text" value="" id="txt_endTime"
+								   onfocus="new WdatePicker({maxDate:'%y-%M-%d'})" style="width:170px; height:30px;" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="radio-inline">
+									<input type="radio" name="optionRadios" id="max" value="max" checked>最大值
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="optionRadios" id="min" value="min" >最小值
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="optionRadios" id="avg" value="avg" >平均值
+								</label>
+							</td>
+							<td>
+								<input style='margin-left:15px;' type='button' value='条件选择' class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" />
+								<!-- 模态框（Modal） -->
+								<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+													&times;
+												</button>
+												<h4 class="modal-title" id="myModalLabel">
+													请选择条件
+												</h4>
+											</div>
+											<div class="modal-body">
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+												<label class="checkbox-inline">
+													<input type="checkbox" id="inlineCheckbox1" value="option1"> 选项 1
+												</label>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+												</button>
+											</div>
+										</div><!-- /.modal-content -->
+									</div><!-- /.modal -->
+								</div>
+							</td>
+							<td colspan="2">
+								<input style='margin-left:15px; width: 60px;' id='sel' type='button' value='查询' class='btn btn-success btn-sm' />
+							</td>
+						</tr>
+					</table>
+				</div>
+			</form>
+		
+		</div>
+	</body>
+</html>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('web.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

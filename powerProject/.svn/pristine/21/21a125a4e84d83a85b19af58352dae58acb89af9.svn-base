@@ -1,0 +1,15 @@
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\DataTable\tuser;
+
+class testController extends Controller
+{
+		public function test(){
+			$data = tuser::select('UID')->get();
+			dd($data);
+		}
+	
+}
+	

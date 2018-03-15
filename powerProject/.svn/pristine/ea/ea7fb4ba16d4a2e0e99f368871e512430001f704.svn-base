@@ -1,0 +1,55 @@
+@extends('web.index')
+@section('content')
+<!DCOTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" name="_token" content="{{ csrf_token() }}"  />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+		<title>历史曲线</title>
+	</head>
+	<script>
+		
+	</script>
+	<body>
+		<div>
+			<form role="form" class="form-inline" id="form" action="#" method="POST">
+				<div class='table-responsive'>
+					<table class='table' id='table' style="border:1px solid red">
+						<tr>
+							<td>
+								<label>变电站标识:</label>
+								<span>{{$stationSingle}}</span>
+							</td>
+							<td>
+								<label for="huilu">监测回路 : </label>
+								<select name="select_one" id="huilu" >
+									@foreach($meterData as $k)
+									<option value="1">{{$k->MeterName}}</option>
+									@endforeach
+								</select>
+							</td>
+							<td>
+								<label for='txt_startTime'>开始时间:</label>
+								<input class="form-control" name="tenmin_startTime" type="text" value="" id="txt_startTime"
+								   onfocus="new WdatePicker({maxDate:'%y-%M-%d'})" style="width:170px; height:30px;" />
+							</td>
+							<td>
+								<label for='txt_endTime'>结束时间:</label>
+								<input class="form-control" name="tenmin_endTime" type="text" value="" id="txt_endTime"
+								   onfocus="new WdatePicker({maxDate:'%y-%M-%d'})" style="width:170px; height:30px;" />
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4">dddd
+							</td>
+						</tr>
+					</table>
+				</div>
+			</form>
+		
+		</div>
+	</body>
+</html>
+
+@endsection

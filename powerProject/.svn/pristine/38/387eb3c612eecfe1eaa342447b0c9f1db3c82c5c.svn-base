@@ -1,0 +1,23 @@
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\tuser;
+use App\user_station;
+use App\role_stationpower;
+use App\tstation;
+use App\tstationpower;
+use App\user_role;
+use Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests;
+
+class LogController extends Controller{
+	
+	public function powerlog(){
+		// $stationDate = session()->get('stationDate');
+		// $stationPower = session()->get('stationPower');
+		return view('web.blade.log');
+	}
+	
+}
+   

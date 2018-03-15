@@ -1,0 +1,69 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests;
+use App\meterinfo;
+class CommonController extends Controller{
+	
+	
+	/*根据路由参数重定向分配视图以及控制器*/
+	public function common(Request $request,$Pid,$stationId){
+		
+		switch($Pid)
+		{
+			case 1:
+			//执行程序
+			break;
+			case 2:
+			
+			break;
+			case 3:
+			
+			break;
+			case 4:
+			
+			break;
+			case 5:
+				return redirect('historyLine/'.$stationId);
+			break;
+			case 6:
+			
+			break;
+			case 7:
+			
+			break;
+			case 8:
+			
+			break;
+		}
+		
+	
+	}
+	
+	/*历史曲线视图*/
+	public function historyLine(Request $request,$stationId){
+		$arr = explode('_',$stationId);
+		$stationid = $arr[0];
+		$stationSingle = $arr[1];
+		$data = meterinfo::select('MeterID','MeterTypeID','MeterName')->where('StationID',"=",$stationid)->get();
+		// dd($data);
+		return view('web.blade.historyLine',['stationSingle'=>$stationSingle,
+					  'meterData'=>$data
+					]);
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
+   

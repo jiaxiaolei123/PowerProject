@@ -1,0 +1,104 @@
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use DB;
+use App\tuser;
+use App\user_station;
+use App\role_stationpower;
+use App\tstation;
+use App\tstationpower;
+use App\user_role;
+use Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests;
+
+class LoginController extends Controller{
+      //加载登录模板
+      public function login(){
+  		  if(session()->has("Uname")){
+  		  	  session()->pull("Uname");
+  			  return redirect("/");
+
+  		  }else{
+  		     return view('login/login');
+  		  }
+      }
+
+
+      //执行登录的方法
+      public function dologin(Request $Request){
+           $user=DB::table('tuser')->where('UName','=',$Request->input('UserName'))->first();
+           // $password=DB::table('tuser')->where('Password','=',$Request->input('UserPwd'))->get();
+ 
+
+           if($user == null){
+			    session()->put('error',"账号或密码错误");
+                return redirect('/login');
+           }else{
+                $password = $user->Password;
+
+                if($Request->input('UserPwd') == $password){ 
+					/*
+						**根据用户UID查询角色权限及用户关联变电站
+					*/
+					//查询用户角色权限信息
+					$roleData = tuser::select('Rid')
+								->leftJoin('user_role','tuser.UID','=','user_role.UID')
+								->where('tuser.UName',"=",$Request->input('UserName'))
+								->get()
+								->toArray();
+					$role_stationPower = role_stationpower::select('Pid')
+										->where('Rid','=',$roleData[0]['Rid'])
+										->get()
+										->toArray();
+					if(stripos($role_stationPower[0]['Pid'],',') ==false){
+						$Power = tstationpower::select('Pid','PName')
+									->where('Pid',"=",$role_stationPower[0]['Pid'])
+									->get();
+					}else{
+						$PidArr = explode(',',$role_stationPower[0]['Pid']);
+						$Power = tstationpower::select("Pid","PName")
+													->whereIn('Pid',$PidArr)
+													->get();
+					}
+					// 查询用户关联变电站信息
+					$station =tuser::select('StationId')
+					->leftJoin('user_station','tuser.UID',"=",'user_station.UID')
+					->where('tuser.UName',"=",$Request->input('UserName'))
+					->get()
+					->toarray();
+					foreach($station as $val){
+						$id= $val;
+					}
+					if(stripos($id['StationId'],',') == false){
+						$stationDate = tstation::select('StationId','StationName','StationSingle')
+										->where('StationId','=',$id['StationId'])
+										->get();
+					}else{
+						$idArray = explode(',',$id['StationId']);
+						$stationDate = tstation::select('StationId','StationName','StationSingle')
+							->whereIn('StationId',$idArray)
+							->get();
+					}
+				
+                    session()->put('Uname',$user->UName);
+                    session()->put('stationDate',$stationDate);
+                    session()->put('stationPower',$Power);
+					return view("web.index",['stationDate'=>$stationDate,'stationPower'=>$Power]); 
+                }else{     
+            		session()->put('pwdErroe',"密码错误");
+            		return redirect('/login');
+                }
+
+           }
+         
+      }
+
+
+
+
+
+	  
+
+}
+
