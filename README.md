@@ -1,9 +1,3 @@
-# PowerProject
-电能质量监测
+#PowerPr
 
-this is my fist update github;
-
-第一次修改readme文件d fwe 
- 
- 挺好 this is a picture
- sdf w 
+测试git push 上传命令好用不 >?
